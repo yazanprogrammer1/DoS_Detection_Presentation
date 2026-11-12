@@ -1,0 +1,6 @@
+label,n_test,Logistic Regression,Random Forest,XGBoost
+BENIGN,78247,97.55,99.93,99.95
+DoS GoldenEye,2057,94.75,100.0,99.9
+DoS Hulk,34569,98.64,99.93,99.99
+DoS Slowhttptest,1046,88.34,99.9,100.0
+DoS slowloris,1077,90.44,99.63,99.72

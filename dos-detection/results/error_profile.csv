@@ -1,0 +1,5 @@
+outcome,Bwd Packet Length Std,Bwd Packet Length Mean,Avg Bwd Segment Size,Packet Length Std,Average Packet Size,Bwd Packet Length Max
+FN,0.0,0.0,0.0,0.0,0.0,0.0
+FP,0.0,0.0,0.0,0.0,0.0,0.0
+TN,0.0,95.0,95.0,35.1,84.5,103.0
+TP,2120.7,1932.5,1932.5,1621.0,916.5,5792.0

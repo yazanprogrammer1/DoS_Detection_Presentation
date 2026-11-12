@@ -1,0 +1,91 @@
+
+======================================================================
+ 1. LOAD & SPLIT (Wednesday, 80/20 stratified by attack type)
+======================================================================
+Train: (467984, 66)   Test: (116996, 66)   Features: 66
+
+======================================================================
+ 2. TUNE RANDOM FOREST (3-fold CV on training data only)
+======================================================================
+Searched 10 combinations x 3 folds in 146 s
+Best CV F1 = 0.9980  with {'n_estimators': 200, 'min_samples_leaf': 1, 'max_features': 0.3, 'max_depth': 30}
+
+======================================================================
+ 3-4. TRAIN & EVALUATE ON UNSEEN TEST SET
+======================================================================
+Dummy                F1=0.0000  P=0.0000  R=0.0000  FPR=0.0000  train=0.0s
+Logistic Regression  F1=0.9654  P=0.9520  R=0.9793  FPR=0.0245  train=14.4s
+Random Forest        F1=0.9989  P=0.9985  R=0.9993  FPR=0.0007  train=112.0s
+XGBoost              F1=0.9994  P=0.9989  R=0.9998  FPR=0.0005  train=7.4s
+
+                     accuracy  precision  recall      f1     fpr  roc_auc  pr_auc      FP       FN   train_s
+model                                                                                                       
+Dummy                  0.6688     0.0000  0.0000  0.0000  0.0000   0.5000  0.3312     0.0  38749.0    0.0180
+Logistic Regression    0.9768     0.9520  0.9793  0.9654  0.0245   0.9979  0.9963  1915.0    804.0   14.3842
+Random Forest          0.9993     0.9985  0.9993  0.9989  0.0007   1.0000  0.9999    57.0     29.0  112.0285
+XGBoost                0.9996     0.9989  0.9998  0.9994  0.0005   1.0000  1.0000    43.0      7.0    7.4472
+
+Detection rate per attack type:
+                  n_test  Logistic Regression  Random Forest  XGBoost
+label                                                                
+BENIGN             78247                97.55          99.93    99.95
+DoS GoldenEye       2057                94.75         100.00    99.90
+DoS Hulk           34569                98.64          99.93    99.99
+DoS Slowhttptest    1046                88.34          99.90   100.00
+DoS slowloris       1077                90.44          99.63    99.72
+
+======================================================================
+ 5. GENERALISATION TEST - Friday DDoS (different day, attack never seen)
+======================================================================
+Label
+DDoS      128014
+BENIGN     93250
+
+                     accuracy  precision  recall      f1     fpr  roc_auc      FP        FN
+model                                                                                      
+Dummy                  0.4214     0.0000  0.0000  0.0000  0.0000   0.5000     0.0  128014.0
+Logistic Regression    0.7835     0.9843  0.6360  0.7727  0.0140   0.9871  1301.0   46598.0
+Random Forest          0.7875     0.9994  0.6332  0.7752  0.0005   0.9352    49.0   46961.0
+XGBoost                0.4868     0.9981  0.1132  0.2033  0.0003   0.9338    27.0  113525.0
+
+======================================================================
+ 6. FIGURES & FEATURE IMPORTANCE
+======================================================================
+Top 10 features:
+Bwd Packet Length Std     0.1954
+Bwd Packet Length Mean    0.1730
+Avg Bwd Segment Size      0.1341
+Packet Length Std         0.0590
+Average Packet Size       0.0531
+Bwd Packet Length Max     0.0515
+Packet Length Mean        0.0457
+Packet Length Variance    0.0357
+Max Packet Length         0.0248
+Subflow Bwd Bytes         0.0223
+
+======================================================================
+ ERROR ANALYSIS - Random Forest on Wednesday test set
+======================================================================
+Errors by true label:
+outcome  Label           
+FN       DoS Hulk            24
+         DoS Slowhttptest     1
+         DoS slowloris        4
+FP       BENIGN              57
+
+Median of top features per outcome (are errors 'look-alikes'?):
+         Bwd Packet Length Std  Bwd Packet Length Mean  Avg Bwd Segment Size  Packet Length Std  Average Packet Size  Bwd Packet Length Max
+outcome                                                                                                                                    
+FN                         0.0                     0.0                   0.0                0.0                  0.0                    0.0
+FP                         0.0                     0.0                   0.0                0.0                  0.0                    0.0
+TN                         0.0                    95.0                  95.0               35.1                 84.5                  103.0
+TP                      2120.7                  1932.5                1932.5             1621.0                916.5                 5792.0
+
+Mean model confidence -> FN: 0.287 | FP: 0.826 | TP: 0.999
+Saved 86 misclassified flows -> results/misclassified_flows.csv
+
+======================================================================
+ 7. SAVE MODEL
+======================================================================
+Saved models/rf_dos_detector.joblib (5.0 MB), models/model_card.json
+Done.

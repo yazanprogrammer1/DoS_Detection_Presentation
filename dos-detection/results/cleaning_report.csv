@@ -1,0 +1,3 @@
+file,rows_raw,rows_nan_inf,rows_duplicated,rows_clean,n_features
+wednesday,692703,1297,106415,584980,66
+friday,225745,34,4447,221264,66
